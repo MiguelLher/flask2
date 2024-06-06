@@ -45,7 +45,7 @@ def home():
         <div class="container">
             <h1>Miguel Lara Hernandez</h1>
             <h2>9 A - 20200705</h2>
-            <img src="https://link_a_tu_imagen.com/imagen.jpg" alt="Miguel Lara Hernandez">
+            <img src="https://miro.medium.com/v2/resize:fit:828/format:webp/1*cG6U1qstYDijh9bPL42e-Q.jpeg" alt="Miguel Lara Hernandez">
             <p>Bienvendio a mi página de presentación personal. Aquí encontrarás información sobre mí y mis proyectos.</p>
         </div>
     </body>
