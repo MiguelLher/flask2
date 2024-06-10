@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clasificador de Miembros del Congreso</title>
     <style>
         body {
@@ -14,68 +15,69 @@
             align-items: center;
             height: 100vh;
         }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        form {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
+        .container {
+            background-color: #fff;
+            padding: 20px 40px;
+            border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
+            max-width: 500px;
             width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
         }
         label {
+            font-size: 14px;
+            color: #555;
             display: block;
             margin-bottom: 5px;
-            color: #555;
         }
-        input[type="text"], input[type="submit"] {
+        input[type="text"] {
             width: 100%;
             padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
         }
         input[type="submit"] {
-            background-color: #007BFF;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
             color: white;
             border: none;
+            border-radius: 4px;
+            font-size: 16px;
             cursor: pointer;
             transition: background-color 0.3s;
         }
         input[type="submit"]:hover {
-            background-color: #0056b3;
+            background-color: #45a049;
         }
         #resultado {
             text-align: center;
-            font-size: 18px;
-            color: #333;
+            margin-top: 20px;
+            font-size: 16px;
         }
     </style>
     <script>
-        function clasificarInsecto(event) {
+        function clasificarMiembro(event) {
             event.preventDefault();
-            const fields = ['infants', 'satellite', 'missile', 'education', 'superfund', 'crime'];
-            const data = {};
-            
-            for (const field of fields) {
-                const value = document.getElementById(field).value;
-                if (value !== '0' && value !== '1') {
-                    document.getElementById('resultado').innerText = 'Error: Todos los campos deben ser 0 o 1.';
-                    return;
-                }
-                data[field] = value;
-            }
-            
+            const infants = document.getElementById('infants').value;
+            const satellite = document.getElementById('satellite').value;
+            const missile = document.getElementById('missile').value;
+            const education = document.getElementById('education').value;
+            const superfund = document.getElementById('superfund').value;
+            const crime = document.getElementById('crime').value;
+
             fetch('/predict', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: new URLSearchParams(data).toString(),
+                body: `infants=${infants}&satellite=${satellite}&missile=${missile}&education=${education}&superfund=${superfund}&crime=${crime}`,
             })
             .then(response => response.json())
             .then(data => {
@@ -93,24 +95,37 @@
     </script>
 </head>
 <body>
-    <div>
+    <div class="container">
         <h1>Clasificador de Miembros del Congreso</h1>
-        <form id="formulario" onsubmit="clasificarInsecto(event)">
-            <label for="infants">"Infants", escribe 0 si está en negativo y 1 si es positivo:</label>
-            <input type="text" id="infants" name="infants"><br>
-            <label for="satellite">"Satellite", escribe 0 si está en negativo y 1 si es positivo:</label>
-            <input type="text" id="satellite" name="satellite"><br>
-            <label for="missile">"Missile", escribe 0 si está en negativo y 1 si es positivo:</label>
-            <input type="text" id="missile" name="missile"><br>
-            <label for="education">"Education", escribe 0 si está en negativo y 1 si es positivo:</label>
-            <input type="text" id="education" name="education"><br>
-            <label for="superfund">"Superfund", escribe 0 si está en negativo y 1 si es positivo:</label>
-            <input type="text" id="superfund" name="superfund"><br>
-            <label for="crime">"Crime", escribe 0 si está en negativo y 1 si es positivo:</label>
-            <input type="text" id="crime" name="crime"><br>
+        <form id="formulario" onsubmit="clasificarMiembro(event)">
+            <div>
+                <label for="infants">Voto sobre Infants (0: negativo, 1: positivo):</label>
+                <input type="text" id="infants" name="infants">
+            </div>
+            <div>
+                <label for="satellite">Voto sobre Satellite (0: negativo, 1: positivo):</label>
+                <input type="text" id="satellite" name="satellite">
+            </div>
+            <div>
+                <label for="missile">Voto sobre Missile (0: negativo, 1: positivo):</label>
+                <input type="text" id="missile" name="missile">
+            </div>
+            <div>
+                <label for="education">Voto sobre Education (0: negativo, 1: positivo):</label>
+                <input type="text" id="education" name="education">
+            </div>
+            <div>
+                <label for="superfund">Voto sobre Superfund (0: negativo, 1: positivo):</label>
+                <input type="text" id="superfund" name="superfund">
+            </div>
+            <div>
+                <label for="crime">Voto sobre Crime (0: negativo, 1: positivo):</label>
+                <input type="text" id="crime" name="crime">
+            </div>
             <input type="submit" value="Enviar">
         </form>
         <p id="resultado"></p>
     </div>
 </body>
 </html>
+
