@@ -6,8 +6,8 @@
     <title>Clasificador de Miembros del Congreso</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
             margin: 0;
             padding: 0;
             display: flex;
@@ -17,16 +17,22 @@
         }
         .container {
             background-color: #fff;
-            padding: 20px 40px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 30px 50px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             max-width: 500px;
             width: 100%;
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         h1 {
             text-align: center;
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            font-size: 24px;
         }
         label {
             font-size: 14px;
@@ -37,15 +43,16 @@
         input[type="text"] {
             width: 100%;
             padding: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 14px;
+            box-sizing: border-box;
         }
         input[type="submit"] {
             width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
+            padding: 12px;
+            background-color: #007bff;
             color: white;
             border: none;
             border-radius: 4px;
@@ -54,41 +61,69 @@
             transition: background-color 0.3s;
         }
         input[type="submit"]:hover {
-            background-color: #45a049;
+            background-color: #0056b3;
         }
         #resultado {
             text-align: center;
             margin-top: 20px;
             font-size: 16px;
+            color: #333;
+        }
+        .error {
+            border-color: red;
+        }
+        .error-message {
+            color: red;
+            font-size: 12px;
+            display: none;
         }
     </style>
     <script>
         function clasificarMiembro(event) {
             event.preventDefault();
-            const infants = document.getElementById('infants').value;
-            const satellite = document.getElementById('satellite').value;
-            const missile = document.getElementById('missile').value;
-            const education = document.getElementById('education').value;
-            const superfund = document.getElementById('superfund').value;
-            const crime = document.getElementById('crime').value;
+            const infants = document.getElementById('infants');
+            const satellite = document.getElementById('satellite');
+            const missile = document.getElementById('missile');
+            const education = document.getElementById('education');
+            const superfund = document.getElementById('superfund');
+            const crime = document.getElementById('crime');
+            const resultado = document.getElementById('resultado');
+
+            let isValid = true;
+            const inputs = [infants, satellite, missile, education, superfund, crime];
+            inputs.forEach(input => {
+                if (input.value !== '0' && input.value !== '1') {
+                    input.classList.add('error');
+                    input.nextElementSibling.style.display = 'block';
+                    isValid = false;
+                } else {
+                    input.classList.remove('error');
+                    input.nextElementSibling.style.display = 'none';
+                }
+            });
+
+            if (!isValid) {
+                resultado.innerText = 'Por favor, completa todos los campos correctamente.';
+                return;
+            }
 
             fetch('/predict', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `infants=${infants}&satellite=${satellite}&missile=${missile}&education=${education}&superfund=${superfund}&crime=${crime}`,
+                body: `infants=${infants.value}&satellite=${satellite.value}&missile=${missile.value}&education=${education.value}&superfund=${superfund.value}&crime=${crime.value}`,
             })
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    document.getElementById('resultado').innerText = 'Error: ' + data.error;
+                    resultado.innerText = 'Error: ' + data.error;
                 } else {
-                    document.getElementById('resultado').innerText = 'El miembro del congreso es: ' + data.categoria;
+                    resultado.innerText = 'El miembro del congreso es: ' + data.categoria;
                 }
             })
             .catch(error => {
-                document.getElementById('resultado').innerText = 'Error en la solicitud.';
+                resultado.innerText = 'Error en la solicitud.';
                 console.error('Error:', error);
             });
         }
@@ -101,26 +136,32 @@
             <div>
                 <label for="infants">Voto sobre Infants (0: negativo, 1: positivo):</label>
                 <input type="text" id="infants" name="infants">
+                <span class="error-message">Ingrese 0 o 1</span>
             </div>
             <div>
                 <label for="satellite">Voto sobre Satellite (0: negativo, 1: positivo):</label>
                 <input type="text" id="satellite" name="satellite">
+                <span class="error-message">Ingrese 0 o 1</span>
             </div>
             <div>
                 <label for="missile">Voto sobre Missile (0: negativo, 1: positivo):</label>
                 <input type="text" id="missile" name="missile">
+                <span class="error-message">Ingrese 0 o 1</span>
             </div>
             <div>
                 <label for="education">Voto sobre Education (0: negativo, 1: positivo):</label>
                 <input type="text" id="education" name="education">
+                <span class="error-message">Ingrese 0 o 1</span>
             </div>
             <div>
                 <label for="superfund">Voto sobre Superfund (0: negativo, 1: positivo):</label>
                 <input type="text" id="superfund" name="superfund">
+                <span class="error-message">Ingrese 0 o 1</span>
             </div>
             <div>
                 <label for="crime">Voto sobre Crime (0: negativo, 1: positivo):</label>
                 <input type="text" id="crime" name="crime">
+                <span class="error-message">Ingrese 0 o 1</span>
             </div>
             <input type="submit" value="Enviar">
         </form>
