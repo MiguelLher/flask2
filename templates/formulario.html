@@ -1,23 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Clasificador de Insectos</title>
+    <meta charset="UTF-8">
+    <title>Clasificador de Miembros del Congreso</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input[type="text"], input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        #resultado {
+            text-align: center;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
     <script>
         function clasificarInsecto(event) {
             event.preventDefault();
-            const infants = document.getElementById('infants').value;
-            const satellite = document.getElementById('satellite').value;
-            const missile = document.getElementById('missile').value;
-            const education = document.getElementById('education').value;
-            const superfund = document.getElementById('superfund').value;
-            const crime = document.getElementById('crime').value;
-
+            const fields = ['infants', 'satellite', 'missile', 'education', 'superfund', 'crime'];
+            const data = {};
+            
+            for (const field of fields) {
+                const value = document.getElementById(field).value;
+                if (value !== '0' && value !== '1') {
+                    document.getElementById('resultado').innerText = 'Error: Todos los campos deben ser 0 o 1.';
+                    return;
+                }
+                data[field] = value;
+            }
+            
             fetch('/predict', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `infants=${infants}&satellite=${satellite}&missile=${missile}&education=${education}&superfund=${superfund}&crime=${crime}`,
+                body: new URLSearchParams(data).toString(),
             })
             .then(response => response.json())
             .then(data => {
@@ -35,22 +93,24 @@
     </script>
 </head>
 <body>
-    <h1>Clasificador de Miembros del Congreso</h1>
-    <form id="formulario" onsubmit="clasificarInsecto(event)">
-        <label for="infants">"Infants", escribe 0 si está en negativo y 1 si es positivo:</label>
-        <input type="text" id="infants" name="infants"><br><br>
-        <label for="satellite">"Satellite", escribe 0 si está en negativo y 1 si es positivo:</label>
-        <input type="text" id="satellite" name="satellite"><br><br>
-        <label for="missile">"Missile", escribe 0 si está en negativo y 1 si es positivo:</label>
-        <input type="text" id="missile" name="missile"><br><br>
-        <label for="education">"Education", escribe 0 si está en negativo y 1 si es positivo:</label>
-        <input type="text" id="education" name="education"><br><br>
-        <label for="superfund">"Superfund", escribe 0 si está en negativo y 1 si es positivo:</label>
-        <input type="text" id="superfund" name="superfund"><br><br>
-        <label for="crime">"Crime", escribe 0 si está en negativo y 1 si es positivo:</label>
-        <input type="text" id="crime" name="crime"><br><br>
-        <input type="submit" value="Enviar">
-    </form>
-    <p id="resultado"></p>
+    <div>
+        <h1>Clasificador de Miembros del Congreso</h1>
+        <form id="formulario" onsubmit="clasificarInsecto(event)">
+            <label for="infants">"Infants", escribe 0 si está en negativo y 1 si es positivo:</label>
+            <input type="text" id="infants" name="infants"><br>
+            <label for="satellite">"Satellite", escribe 0 si está en negativo y 1 si es positivo:</label>
+            <input type="text" id="satellite" name="satellite"><br>
+            <label for="missile">"Missile", escribe 0 si está en negativo y 1 si es positivo:</label>
+            <input type="text" id="missile" name="missile"><br>
+            <label for="education">"Education", escribe 0 si está en negativo y 1 si es positivo:</label>
+            <input type="text" id="education" name="education"><br>
+            <label for="superfund">"Superfund", escribe 0 si está en negativo y 1 si es positivo:</label>
+            <input type="text" id="superfund" name="superfund"><br>
+            <label for="crime">"Crime", escribe 0 si está en negativo y 1 si es positivo:</label>
+            <input type="text" id="crime" name="crime"><br>
+            <input type="submit" value="Enviar">
+        </form>
+        <p id="resultado"></p>
+    </div>
 </body>
 </html>
