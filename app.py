@@ -6,7 +6,7 @@ import numpy as np
 app = Flask(__name__)
 
 # Cargar el modelo entrenado
-model = joblib.load('modeloRF.pkl')
+model = joblib.load('/modeloRF.pkl')
 
 @app.route('/')
 def home():
