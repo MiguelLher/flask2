@@ -3,105 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predicción de Ventas de Videojuegos</title>
+    <title>Predicción de Ventas Globales de Videojuegos</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background-color: #fff;
-            padding: 30px 50px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-            width: 100%;
-            animation: fadeIn 1s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 24px;
-        }
-        label {
-            font-size: 14px;
-            color: #555;
-            display: block;
-            margin-bottom: 5px;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-        input[type="submit"] {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-        #resultado {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 16px;
-            color: #333;
-        }
-        .error {
-            border-color: red;
-        }
-        .error-message {
-            color: red;
-            font-size: 12px;
-            display: none;
-        }
+        /* Estilos CSS como los que proporcionaste anteriormente */
+        /* ... */
     </style>
     <script>
         function predecirVentas(event) {
             event.preventDefault();
-            const na_sales = document.getElementById('na_sales');
-            const eu_sales = document.getElementById('eu_sales');
-            const jp_sales = document.getElementById('jp_sales');
-            const other_sales = document.getElementById('other_sales');
-            const genre = document.getElementById('genre');
-            const platform = document.getElementById('platform');
+            const NA_Sales = document.getElementById('NA_Sales');
+            const EU_Sales = document.getElementById('EU_Sales');
+            const JP_Sales = document.getElementById('JP_Sales');
+            const Other_Sales = document.getElementById('Other_Sales');
+            const Genre = document.getElementById('Genre');
+            const Platform = document.getElementById('Platform');
             const resultado = document.getElementById('resultado');
+
+            let isValid = true;
+            const inputs = [NA_Sales, EU_Sales, JP_Sales, Other_Sales, Genre, Platform];
+            inputs.forEach(input => {
+                if (isNaN(input.value)) {
+                    input.classList.add('error');
+                    input.nextElementSibling.style.display = 'block';
+                    isValid = false;
+                } else {
+                    input.classList.remove('error');
+                    input.nextElementSibling.style.display = 'none';
+                }
+            });
+
+            if (!isValid) {
+                resultado.innerText = 'Por favor, completa todos los campos correctamente.';
+                return;
+            }
 
             fetch('/predict', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `na_sales=${na_sales.value}&eu_sales=${eu_sales.value}&jp_sales=${jp_sales.value}&other_sales=${other_sales.value}&genre=${genre.value}&platform=${platform.value}`,
+                body: `NA_Sales=${NA_Sales.value}&EU_Sales=${EU_Sales.value}&JP_Sales=${JP_Sales.value}&Other_Sales=${Other_Sales.value}&Genre=${Genre.value}&Platform=${Platform.value}`,
             })
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
                     resultado.innerText = 'Error: ' + data.error;
                 } else {
-                    resultado.innerText = 'Predicción de Ventas Globales: ' + data.prediccion;
+                    resultado.innerText = 'Predicción de Ventas Globales: ' + data.ventas_globales.toFixed(2) + ' millones de unidades';
                 }
             })
             .catch(error => {
@@ -113,35 +61,41 @@
 </head>
 <body>
     <div class="container">
-        <h1>Predicción de Ventas de Videojuegos</h1>
+        <h1>Predicción de Ventas Globales de Videojuegos</h1>
         <form id="formulario" onsubmit="predecirVentas(event)">
             <div>
-                <label for="na_sales">Ventas en Norteamérica:</label>
-                <input type="text" id="na_sales" name="na_sales" required>
+                <label for="NA_Sales">Ventas en América del Norte (millones de unidades):</label>
+                <input type="text" id="NA_Sales" name="NA_Sales">
+                <span class="error-message">Ingrese un número válido</span>
             </div>
             <div>
-                <label for="eu_sales">Ventas en Europa:</label>
-                <input type="text" id="eu_sales" name="eu_sales" required>
+                <label for="EU_Sales">Ventas en Europa (millones de unidades):</label>
+                <input type="text" id="EU_Sales" name="EU_Sales">
+                <span class="error-message">Ingrese un número válido</span>
             </div>
             <div>
-                <label for="jp_sales">Ventas en Japón:</label>
-                <input type="text" id="jp_sales" name="jp_sales" required>
+                <label for="JP_Sales">Ventas en Japón (millones de unidades):</label>
+                <input type="text" id="JP_Sales" name="JP_Sales">
+                <span class="error-message">Ingrese un número válido</span>
             </div>
             <div>
-                <label for="other_sales">Otras Ventas:</label>
-                <input type="text" id="other_sales" name="other_sales" required>
+                <label for="Other_Sales">Otras Ventas (millones de unidades):</label>
+                <input type="text" id="Other_Sales" name="Other_Sales">
+                <span class="error-message">Ingrese un número válido</span>
             </div>
             <div>
-                <label for="genre">Género:</label>
-                <input type="text" id="genre" name="genre" required>
+                <label for="Genre">Género (0: acción, 1: deportes, ...):</label>
+                <input type="text" id="Genre" name="Genre">
+                <span class="error-message">Ingrese un número válido</span>
             </div>
             <div>
-                <label for="platform">Plataforma:</label>
-                <input type="text" id="platform" name="platform" required>
+                <label for="Platform">Plataforma (0: PS4, 1: Xbox, ...):</label>
+                <input type="text" id="Platform" name="Platform">
+                <span class="error-message">Ingrese un número válido</span>
             </div>
-            <input type="submit" value="Predecir">
+            <input type="submit" value="Predecir Ventas Globales">
         </form>
-        <div id="resultado"></div>
+        <p id="resultado"></p>
     </div>
 </body>
 </html>

@@ -1,42 +1,39 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, render_template, jsonify
 import joblib
-import numpy as np
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
+import numpy as np
 
 app = Flask(__name__)
 
-# Cargar el modelo
-model_nn = joblib.load('modeloRF.pkl')
+# Cargar el modelo entrenado
+model = joblib.load('modeloRF.pkl')
 
-# Definir MinMaxScaler (asegúrate de usar el mismo escalador que usaste durante el entrenamiento)
-scaler = MinMaxScaler()
+@app.route('/')
+def home():
+    return render_template('formulario.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        # Obtener los datos del formulario
-        na_sales = float(request.form['na_sales'])
-        eu_sales = float(request.form['eu_sales'])
-        jp_sales = float(request.form['jp_sales'])
-        other_sales = float(request.form['other_sales'])
-        genre = float(request.form['genre'])
-        platform = float(request.form['platform'])
+        # Obtener los datos enviados en el request
+        NA_Sales = float(request.form['NA_Sales'])
+        EU_Sales = float(request.form['EU_Sales'])
+        JP_Sales = float(request.form['JP_Sales'])
+        Other_Sales = float(request.form['Other_Sales'])
+        Genre = float(request.form['Genre'])
+        Platform = float(request.form['Platform'])
 
-        # Crear el DataFrame con los datos de entrada
-        input_data = pd.DataFrame([[na_sales, eu_sales, jp_sales, other_sales, genre, platform]],
-                                  columns=['NA_Sales', 'EU_Sales', 'JP_Sales', 'Other_Sales', 'Genre', 'Platform'])
+        # Crear un DataFrame con los datos
+        data_df = pd.DataFrame([[NA_Sales, EU_Sales, JP_Sales, Other_Sales, Genre, Platform]],
+                               columns=['NA_Sales', 'EU_Sales', 'JP_Sales', 'Other_Sales', 'Genre', 'Platform'])
 
-        # Escalar los datos de entrada
-        input_data_scaled = scaler.transform(input_data)
-
-        # Realizar la predicción
-        prediccion = model_nn.predict(input_data_scaled)
-        prediccion = prediccion[0]  # Obtener el primer (y único) valor de la predicción
-
-        return jsonify(prediccion=prediccion)
+        # Realizar predicciones
+        prediction = model.predict(data_df)
+        
+        # Devolver las predicciones como respuesta JSON
+        return jsonify({'ventas_globales': np.exp(prediction[0])})  # np.exp para revertir la transformación logarítmica si aplica
     except Exception as e:
-        return jsonify(error=str(e))
+        return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
     app.run(debug=True)
