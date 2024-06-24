@@ -1,47 +1,42 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, jsonify
 import joblib
+import numpy as np
 import pandas as pd
-import logging
+from sklearn.preprocessing import MinMaxScaler
 
 app = Flask(__name__)
 
-# Configurar el registro
-logging.basicConfig(level=logging.DEBUG)
+# Cargar el modelo
+model_nn = joblib.load('modeloRF.pkl')
 
-# Cargar el modelo entrenado
-model = joblib.load('modeloRF.pkl')
-app.logger.debug('Modelo cargado correctamente.')
-
-@app.route('/')
-def home():
-    return render_template('formulario.html')
+# Definir MinMaxScaler (asegúrate de usar el mismo escalador que usaste durante el entrenamiento)
+scaler = MinMaxScaler()
 
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        # Obtener los datos enviados en el request
-        infants = float(request.form['infants'])
-        satellite = float(request.form['satellite'])
-        missile = float(request.form['missile'])
-        education = float(request.form['education'])
-        superfund = float(request.form['superfund'])
-        crime = float(request.form['crime'])
+        # Obtener los datos del formulario
+        na_sales = float(request.form['na_sales'])
+        eu_sales = float(request.form['eu_sales'])
+        jp_sales = float(request.form['jp_sales'])
+        other_sales = float(request.form['other_sales'])
+        genre = float(request.form['genre'])
+        platform = float(request.form['platform'])
 
-        
-        # Crear un DataFrame con los datos
-        data_df = pd.DataFrame([[infants, satellite,missile, education, superfund, crime ]], columns=['infants', 'satellite', 'missile', 'education', 'superfund','crime'])
-        app.logger.debug(f'DataFrame creado: {data_df}')
-        
-        # Realizar predicciones
-        prediction = model.predict(data_df)
-        app.logger.debug(f'Predicción: {prediction[0]}')
-        
-        # Devolver las predicciones como respuesta JSON
-        return jsonify({'categoria': prediction[0]})
+        # Crear el DataFrame con los datos de entrada
+        input_data = pd.DataFrame([[na_sales, eu_sales, jp_sales, other_sales, genre, platform]],
+                                  columns=['NA_Sales', 'EU_Sales', 'JP_Sales', 'Other_Sales', 'Genre', 'Platform'])
+
+        # Escalar los datos de entrada
+        input_data_scaled = scaler.transform(input_data)
+
+        # Realizar la predicción
+        prediccion = model_nn.predict(input_data_scaled)
+        prediccion = prediccion[0]  # Obtener el primer (y único) valor de la predicción
+
+        return jsonify(prediccion=prediccion)
     except Exception as e:
-        app.logger.error(f'Error en la predicción: {str(e)}')
-        return jsonify({'error': str(e)}), 400
+        return jsonify(error=str(e))
 
 if __name__ == '__main__':
     app.run(debug=True)
-
