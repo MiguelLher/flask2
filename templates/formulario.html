@@ -3,57 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predicción de Ventas Globales de Videojuegos</title>
+    <title>Predicción de Ventas de Videojuegos</title>
     <style>
-        /* Estilos CSS como los que proporcionaste anteriormente */
-        /* ... */
+        /* Estilos CSS aquí */
     </style>
     <script>
         function predecirVentas(event) {
             event.preventDefault();
-            const NA_Sales = document.getElementById('NA_Sales');
-            const EU_Sales = document.getElementById('EU_Sales');
-            const JP_Sales = document.getElementById('JP_Sales');
-            const Other_Sales = document.getElementById('Other_Sales');
-            const Genre = document.getElementById('Genre');
-            const Platform = document.getElementById('Platform');
-            const resultado = document.getElementById('resultado');
+            const inputFields = ['NA_Sales', 'EU_Sales', 'JP_Sales', 'Other_Sales', 'Genre', 'Platform'];
 
-            let isValid = true;
-            const inputs = [NA_Sales, EU_Sales, JP_Sales, Other_Sales, Genre, Platform];
-            inputs.forEach(input => {
-                if (isNaN(input.value)) {
-                    input.classList.add('error');
-                    input.nextElementSibling.style.display = 'block';
-                    isValid = false;
-                } else {
-                    input.classList.remove('error');
-                    input.nextElementSibling.style.display = 'none';
-                }
+            const data = {};
+            inputFields.forEach(field => {
+                data[field] = document.getElementById(field).value.trim();
             });
-
-            if (!isValid) {
-                resultado.innerText = 'Por favor, completa todos los campos correctamente.';
-                return;
-            }
 
             fetch('/predict', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
                 },
-                body: `NA_Sales=${NA_Sales.value}&EU_Sales=${EU_Sales.value}&JP_Sales=${JP_Sales.value}&Other_Sales=${Other_Sales.value}&Genre=${Genre.value}&Platform=${Platform.value}`,
+                body: JSON.stringify(data),
             })
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    resultado.innerText = 'Error: ' + data.error;
+                    document.getElementById('resultado').innerText = 'Error: ' + data.error;
                 } else {
-                    resultado.innerText = 'Predicción de Ventas Globales: ' + data.ventas_globales.toFixed(2) + ' millones de unidades';
+                    document.getElementById('resultado').innerText = 'Predicción de Ventas Globales: ' + data.prediccion.toFixed(2);
                 }
             })
             .catch(error => {
-                resultado.innerText = 'Error en la solicitud.';
+                document.getElementById('resultado').innerText = 'Error en la solicitud.';
                 console.error('Error:', error);
             });
         }
@@ -61,39 +41,33 @@
 </head>
 <body>
     <div class="container">
-        <h1>Predicción de Ventas Globales de Videojuegos</h1>
+        <h1>Predicción de Ventas de Videojuegos</h1>
         <form id="formulario" onsubmit="predecirVentas(event)">
             <div>
-                <label for="NA_Sales">Ventas en América del Norte (millones de unidades):</label>
-                <input type="text" id="NA_Sales" name="NA_Sales">
-                <span class="error-message">Ingrese un número válido</span>
+                <label for="NA_Sales">Ventas en América del Norte:</label>
+                <input type="text" id="NA_Sales" name="NA_Sales" required>
             </div>
             <div>
-                <label for="EU_Sales">Ventas en Europa (millones de unidades):</label>
-                <input type="text" id="EU_Sales" name="EU_Sales">
-                <span class="error-message">Ingrese un número válido</span>
+                <label for="EU_Sales">Ventas en Europa:</label>
+                <input type="text" id="EU_Sales" name="EU_Sales" required>
             </div>
             <div>
-                <label for="JP_Sales">Ventas en Japón (millones de unidades):</label>
-                <input type="text" id="JP_Sales" name="JP_Sales">
-                <span class="error-message">Ingrese un número válido</span>
+                <label for="JP_Sales">Ventas en Japón:</label>
+                <input type="text" id="JP_Sales" name="JP_Sales" required>
             </div>
             <div>
-                <label for="Other_Sales">Otras Ventas (millones de unidades):</label>
-                <input type="text" id="Other_Sales" name="Other_Sales">
-                <span class="error-message">Ingrese un número válido</span>
+                <label for="Other_Sales">Otras Ventas:</label>
+                <input type="text" id="Other_Sales" name="Other_Sales" required>
             </div>
             <div>
-                <label for="Genre">Género (0: acción, 1: deportes, ...):</label>
-                <input type="text" id="Genre" name="Genre">
-                <span class="error-message">Ingrese un número válido</span>
+                <label for="Genre">Género:</label>
+                <input type="text" id="Genre" name="Genre" required>
             </div>
             <div>
-                <label for="Platform">Plataforma (0: PS4, 1: Xbox, ...):</label>
-                <input type="text" id="Platform" name="Platform">
-                <span class="error-message">Ingrese un número válido</span>
+                <label for="Platform">Plataforma:</label>
+                <input type="text" id="Platform" name="Platform" required>
             </div>
-            <input type="submit" value="Predecir Ventas Globales">
+            <input type="submit" value="Predecir Ventas">
         </form>
         <p id="resultado"></p>
     </div>

@@ -15,23 +15,18 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        # Obtener los datos enviados en el request
-        NA_Sales = float(request.form['NA_Sales'])
-        EU_Sales = float(request.form['EU_Sales'])
-        JP_Sales = float(request.form['JP_Sales'])
-        Other_Sales = float(request.form['Other_Sales'])
-        Genre = float(request.form['Genre'])
-        Platform = float(request.form['Platform'])
+        # Obtener los datos del formulario
+        data = request.get_json()
 
-        # Crear un DataFrame con los datos
-        data_df = pd.DataFrame([[NA_Sales, EU_Sales, JP_Sales, Other_Sales, Genre, Platform]],
-                               columns=['NA_Sales', 'EU_Sales', 'JP_Sales', 'Other_Sales', 'Genre', 'Platform'])
+        # Crear un DataFrame con los datos del usuario
+        data_df = pd.DataFrame([data])
 
-        # Realizar predicciones
+        # Realizar la predicción
         prediction = model.predict(data_df)
-        
-        # Devolver las predicciones como respuesta JSON
-        return jsonify({'ventas_globales': np.exp(prediction[0])})  # np.exp para revertir la transformación logarítmica si aplica
+
+        # Devolver la predicción como respuesta JSON
+        return jsonify({'prediccion': np.round(prediction[0], 2)})
+    
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
