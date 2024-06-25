@@ -1,172 +1,72 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clasificador de Miembros del Congreso</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background-color: #fff;
-            padding: 30px 50px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-            width: 100%;
-            animation: fadeIn 1s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 24px;
-        }
-        label {
-            font-size: 14px;
-            color: #555;
-            display: block;
-            margin-bottom: 5px;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-        input[type="submit"] {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-        #resultado {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 16px;
-            color: #333;
-        }
-        .error {
-            border-color: red;
-        }
-        .error-message {
-            color: red;
-            font-size: 12px;
-            display: none;
-        }
-    </style>
+    <title>Predicción de Ventas de Videojuegos</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script>
-        function clasificarMiembro(event) {
+        function predecirVentas(event) {
             event.preventDefault();
-            const infants = document.getElementById('infants');
-            const satellite = document.getElementById('satellite');
-            const missile = document.getElementById('missile');
-            const education = document.getElementById('education');
-            const superfund = document.getElementById('superfund');
-            const crime = document.getElementById('crime');
-            const resultado = document.getElementById('resultado');
-
-            let isValid = true;
-            const inputs = [infants, satellite, missile, education, superfund, crime];
-            inputs.forEach(input => {
-                if (input.value !== '0' && input.value !== '1') {
-                    input.classList.add('error');
-                    input.nextElementSibling.style.display = 'block';
-                    isValid = false;
-                } else {
-                    input.classList.remove('error');
-                    input.nextElementSibling.style.display = 'none';
-                }
-            });
-
-            if (!isValid) {
-                resultado.innerText = 'Por favor, completa todos los campos correctamente.';
-                return;
-            }
+            const na_sales = document.getElementById('na_sales').value;
+            const eu_sales = document.getElementById('eu_sales').value;
+            const jp_sales = document.getElementById('jp_sales').value;
+            const other_sales = document.getElementById('other_sales').value;
+            const genre = document.getElementById('genre').value;
+            const platform = document.getElementById('platform').value;
 
             fetch('/predict', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `infants=${infants.value}&satellite=${satellite.value}&missile=${missile.value}&education=${education.value}&superfund=${superfund.value}&crime=${crime.value}`,
+                body: `na_sales=${na_sales}&eu_sales=${eu_sales}&jp_sales=${jp_sales}&other_sales=${other_sales}&genre=${genre}&platform=${platform}`,
             })
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    resultado.innerText = 'Error: ' + data.error;
+                    document.getElementById('resultado').innerText = 'Error: ' + data.error;
                 } else {
-                    resultado.innerText = 'El miembro del congreso es: ' + data.categoria;
+                    document.getElementById('resultado').innerText = 'Las ventas globales predichas son ' + data.global_sales;
                 }
             })
             .catch(error => {
-                resultado.innerText = 'Error en la solicitud.';
+                document.getElementById('resultado').innerText = 'Error en la solicitud.';
                 console.error('Error:', error);
             });
         }
     </script>
 </head>
-<body>
-    <div class="container">
-        <h1>Clasificador de Miembros del Congreso</h1>
-        <form id="formulario" onsubmit="clasificarMiembro(event)">
-            <div>
-                <label for="infants">Voto sobre Infants (0: negativo, 1: positivo):</label>
-                <input type="text" id="infants" name="infants">
-                <span class="error-message">Ingrese 0 o 1</span>
+
+<body class="bg-gray-100">
+    <div class="container mx-auto p-8">
+        <h1 class="text-2xl font-bold mb-6 text-center">Predicción de Ventas de Videojuegos</h1>
+        <form id="formulario" onsubmit="predecirVentas(event)" class="bg-white p-6 rounded shadow-md max-w-lg mx-auto">
+            <div class="mb-4">
+                <label for="na_sales" class="block text-gray-700">NA Sales:</label>
+                <input type="text" id="na_sales" name="na_sales" class="mt-1 p-2 w-full border rounded" required>
             </div>
-            <div>
-                <label for="satellite">Voto sobre Satellite (0: negativo, 1: positivo):</label>
-                <input type="text" id="satellite" name="satellite">
-                <span class="error-message">Ingrese 0 o 1</span>
+            <div class="mb-4">
+                <label for="eu_sales" class="block text-gray-700">EU Sales:</label>
+                <input type="text" id="eu_sales" name="eu_sales" class="mt-1 p-2 w-full border rounded" required>
             </div>
-            <div>
-                <label for="missile">Voto sobre Missile (0: negativo, 1: positivo):</label>
-                <input type="text" id="missile" name="missile">
-                <span class="error-message">Ingrese 0 o 1</span>
+            <div class="mb-4">
+                <label for="jp_sales" class="block text-gray-700">JP Sales:</label>
+                <input type="text" id="jp_sales" name="jp_sales" class="mt-1 p-2 w-full border rounded" required>
             </div>
-            <div>
-                <label for="education">Voto sobre Education (0: negativo, 1: positivo):</label>
-                <input type="text" id="education" name="education">
-                <span class="error-message">Ingrese 0 o 1</span>
+            <div class="mb-4">
+                <label for="other_sales" class="block text-gray-700">Other Sales:</label>
+                <input type="text" id="other_sales" name="other_sales" class="mt-1 p-2 w-full border rounded" required>
             </div>
-            <div>
-                <label for="superfund">Voto sobre Superfund (0: negativo, 1: positivo):</label>
-                <input type="text" id="superfund" name="superfund">
-                <span class="error-message">Ingrese 0 o 1</span>
+            <div class="mb-4">
+                <label for="genre" class="block text-gray-700">Genre:</label>
+                <input type="text" id="genre" name="genre" class="mt-1 p-2 w-full border rounded" required>
             </div>
-            <div>
-                <label for="crime">Voto sobre Crime (0: negativo, 1: positivo):</label>
-                <input type="text" id="crime" name="crime">
-                <span class="error-message">Ingrese 0 o 1</span>
+            <div class="mb-4">
+                <label for="platform" class="block text-gray-700">Platform:</label>
+                <input type="text" id="platform" name="platform" class="mt-1 p-2 w-full border rounded" required>
             </div>
-            <input type="submit" value="Enviar">
+            <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">Predecir</button>
         </form>
-        holaaaaaaaaaaaaaaaaaa
-        <p id="resultado"></p>
+        <div id="resultado" class="mt-4 p-4 bg-white rounded shadow-md"></div>
     </div>
 </body>
 </html>
