@@ -86,7 +86,7 @@
                 if (data.error) {
                     document.getElementById('resultado').innerText = 'Error: ' + data.error;
                 } else {
-                    document.getElementById('resultado').innerText = 'La predicción de rendimiento es: ' + data.prediccion.toFixed(2);
+                    document.getElementById('resultado').innerText = 'La predicción de rendimiento estimada es: ' + data.prediccion.toFixed(2) + ' unidades.';
                 }
             })
             .catch(error => {
@@ -102,27 +102,27 @@
         <form id="formulario" onsubmit="predecirRendimiento(event)">
             <div class="form-group">
                 <label for="fruitset">Fruitset:</label>
-                <input type="text" id="fruitset" name="fruitset">
+                <input type="text" id="fruitset" name="fruitset" placeholder="Valor de fruitset">
             </div>
             <div class="form-group">
                 <label for="seeds">Seeds:</label>
-                <input type="text" id="seeds" name="seeds">
+                <input type="text" id="seeds" name="seeds" placeholder="Valor de seeds">
             </div>
             <div class="form-group">
                 <label for="fruitmass">Fruitmass:</label>
-                <input type="text" id="fruitmass" name="fruitmass">
+                <input type="text" id="fruitmass" name="fruitmass" placeholder="Valor de fruitmass">
             </div>
             <div class="form-group">
                 <label for="RowNum">Row Number:</label>
-                <input type="text" id="RowNum" name="RowNum">
+                <input type="text" id="RowNum" name="RowNum" placeholder="Número de fila">
             </div>
             <div class="form-group">
                 <label for="clonesize">Clonesize:</label>
-                <input type="text" id="clonesize" name="clonesize">
+                <input type="text" id="clonesize" name="clonesize" placeholder="Valor de clonesize">
             </div>
             <div class="form-group">
                 <label for="AverageOfUpperTRange">AverageOfUpperTRange:</label>
-                <input type="text" id="AverageOfUpperTRange" name="AverageOfUpperTRange">
+                <input type="text" id="AverageOfUpperTRange" name="AverageOfUpperTRange" placeholder="Valor de AverageOfUpperTRange">
             </div>
             <input type="submit" value="Predecir Rendimiento">
         </form>
