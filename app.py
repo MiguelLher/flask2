@@ -1,16 +1,12 @@
 from flask import Flask, request, render_template, jsonify
 import joblib
 import pandas as pd
-import logging
+import numpy as np
 
 app = Flask(__name__)
 
-# Configurar el registro
-logging.basicConfig(level=logging.DEBUG)
-
 # Cargar el modelo entrenado
 model = joblib.load('model.pkl')
-app.logger.debug('Modelo cargado correctamente.')
 
 @app.route('/')
 def home():
@@ -20,27 +16,31 @@ def home():
 def predict():
     try:
         # Obtener los datos enviados en el request
-        app.logger.debug(f'Datos recibidos: {request.form}')
         fruitset = float(request.form['fruitset'])
         seeds = float(request.form['seeds'])
         fruitmass = float(request.form['fruitmass'])
-        row_num = float(request.form['row_number'])  # Cambio aquí: 'row_number' en lugar de 'row_num'
+        RowNum = float(request.form['RowNum'])
         clonesize = float(request.form['clonesize'])
-        avg_upper_trange = float(request.form['avg_upper_trange'])
-
-        # Crear un DataFrame con los datos
-        data_df = pd.DataFrame([[fruitset, seeds, fruitmass, row_num, clonesize, avg_upper_trange]], 
-                               columns=['fruitset', 'seeds', 'fruitmass', 'Row#', 'clonesize', 'AverageOfUpperTRange'])
-        app.logger.debug(f'DataFrame creado: {data_df}')
-
-        # Realizar predicciones usando el modelo cargado
-        prediction = model.predict(data_df)
-        app.logger.debug(f'Predicción: {prediction[0]}')
-
-        # Devolver las predicciones como respuesta JSON
-        return jsonify({'yield': prediction[0]})
+        AverageOfUpperTRange = float(request.form['AverageOfUpperTRange'])
+        
+        # Crear un DataFrame con los datos para la predicción
+        data = pd.DataFrame({
+            'fruitset': [fruitset],
+            'seeds': [seeds],
+            'fruitmass': [fruitmass],
+            'Row#': [RowNum],
+            'clonesize': [clonesize],
+            'AverageOfUpperTRange': [AverageOfUpperTRange]
+        })
+        
+        # Realizar la predicción
+        prediction = model.predict(data)
+        prediction_result = prediction[0]
+        
+        # Devolver la predicción como respuesta JSON
+        return jsonify({'prediccion': prediction_result})
+    
     except Exception as e:
-        app.logger.error(f'Error en la predicción: {str(e)}')
         return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':

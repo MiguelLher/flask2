@@ -1,31 +1,92 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Predicción de Rendimiento</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Predicción de Rendimiento de Arándanos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #contenedor {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 400px;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            flex: 1;
+            font-weight: bold;
+            color: #34495e;
+            margin-right: 10px;
+        }
+        .form-group input {
+            flex: 2;
+            padding: 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            background-color: #2980b9;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            width: 100%;
+        }
+        input[type="submit"]:hover {
+            background-color: #3498db;
+        }
+        #resultado {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #000000;
+            text-align: center;
+        }
+    </style>
     <script>
         function predecirRendimiento(event) {
             event.preventDefault();
             const fruitset = document.getElementById('fruitset').value;
             const seeds = document.getElementById('seeds').value;
             const fruitmass = document.getElementById('fruitmass').value;
-            const row_number = document.getElementById('row_number').value;
+            const RowNum = document.getElementById('RowNum').value;
             const clonesize = document.getElementById('clonesize').value;
-            const avg_upper_trange = document.getElementById('avg_upper_trange').value;
+            const AverageOfUpperTRange = document.getElementById('AverageOfUpperTRange').value;
 
             fetch('/predict', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `fruitset=${fruitset}&seeds=${seeds}&fruitmass=${fruitmass}&row_number=${row_number}&clonesize=${clonesize}&avg_upper_trange=${avg_upper_trange}`,
+                body: `fruitset=${fruitset}&seeds=${seeds}&fruitmass=${fruitmass}&RowNum=${RowNum}&clonesize=${clonesize}&AverageOfUpperTRange=${AverageOfUpperTRange}`,
             })
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
                     document.getElementById('resultado').innerText = 'Error: ' + data.error;
                 } else {
-                    document.getElementById('resultado').innerText = 'El rendimiento predicho es ' + data.yield;
+                    document.getElementById('resultado').innerText = 'La predicción de rendimiento es: ' + data.prediccion.toFixed(2);
                 }
             })
             .catch(error => {
@@ -35,38 +96,37 @@
         }
     </script>
 </head>
-
-<body class="bg-gray-100">
-    <div class="container mx-auto p-8">
-        <h1 class="text-2xl font-bold mb-6 text-center">Predicción de Rendimiento</h1>
-        <form id="formulario" onsubmit="predecirRendimiento(event)" class="bg-white p-6 rounded shadow-md max-w-lg mx-auto">
-            <div class="mb-4">
-                <label for="fruitset" class="block text-gray-700">Fruit Set:</label>
-                <input type="text" id="fruitset" name="fruitset" class="mt-1 p-2 w-full border rounded" required>
+<body>
+    <div id="contenedor">
+        <h1>Predicción de Rendimiento de Arándanos</h1>
+        <form id="formulario" onsubmit="predecirRendimiento(event)">
+            <div class="form-group">
+                <label for="fruitset">Fruitset:</label>
+                <input type="text" id="fruitset" name="fruitset">
             </div>
-            <div class="mb-4">
-                <label for="seeds" class="block text-gray-700">Seeds:</label>
-                <input type="text" id="seeds" name="seeds" class="mt-1 p-2 w-full border rounded" required>
+            <div class="form-group">
+                <label for="seeds">Seeds:</label>
+                <input type="text" id="seeds" name="seeds">
             </div>
-            <div class="mb-4">
-                <label for="fruitmass" class="block text-gray-700">Fruit Mass:</label>
-                <input type="text" id="fruitmass" name="fruitmass" class="mt-1 p-2 w-full border rounded" required>
+            <div class="form-group">
+                <label for="fruitmass">Fruitmass:</label>
+                <input type="text" id="fruitmass" name="fruitmass">
             </div>
-            <div class="mb-4">
-                <label for="row_number" class="block text-gray-700">Row Number:</label>
-                <input type="text" id="row_number" name="row_number" class="mt-1 p-2 w-full border rounded" required>
+            <div class="form-group">
+                <label for="RowNum">Row Number:</label>
+                <input type="text" id="RowNum" name="RowNum">
             </div>
-            <div class="mb-4">
-                <label for="clonesize" class="block text-gray-700">Clone Size:</label>
-                <input type="text" id="clonesize" name="clonesize" class="mt-1 p-2 w-full border rounded" required>
+            <div class="form-group">
+                <label for="clonesize">Clonesize:</label>
+                <input type="text" id="clonesize" name="clonesize">
             </div>
-            <div class="mb-4">
-                <label for="avg_upper_trange" class="block text-gray-700">Average of Upper T Range:</label>
-                <input type="text" id="avg_upper_trange" name="avg_upper_trange" class="mt-1 p-2 w-full border rounded" required>
+            <div class="form-group">
+                <label for="AverageOfUpperTRange">AverageOfUpperTRange:</label>
+                <input type="text" id="AverageOfUpperTRange" name="AverageOfUpperTRange">
             </div>
-            <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">Predecir</button>
+            <input type="submit" value="Predecir Rendimiento">
         </form>
-        <div id="resultado" class="mt-4 p-4 bg-white rounded shadow-md"></div>
+        <p id="resultado"></p>
     </div>
 </body>
 </html>
