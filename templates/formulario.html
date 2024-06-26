@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Predicción de Rendimiento de Arándanos</title>
+    <title>Predicción de Rendimiento</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script>
         function predecirRendimiento(event) {
@@ -9,7 +9,7 @@
             const fruitset = document.getElementById('fruitset').value;
             const seeds = document.getElementById('seeds').value;
             const fruitmass = document.getElementById('fruitmass').value;
-            const row_num = document.getElementById('row_num').value;
+            const row_number = document.getElementById('row_number').value;
             const clonesize = document.getElementById('clonesize').value;
             const avg_upper_trange = document.getElementById('avg_upper_trange').value;
 
@@ -18,7 +18,7 @@
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `fruitset=${fruitset}&seeds=${seeds}&fruitmass=${fruitmass}&row_num=${row_num}&clonesize=${clonesize}&avg_upper_trange=${avg_upper_trange}`,
+                body: `fruitset=${fruitset}&seeds=${seeds}&fruitmass=${fruitmass}&row_number=${row_number}&clonesize=${clonesize}&avg_upper_trange=${avg_upper_trange}`,
             })
             .then(response => response.json())
             .then(data => {
@@ -38,10 +38,10 @@
 
 <body class="bg-gray-100">
     <div class="container mx-auto p-8">
-        <h1 class="text-2xl font-bold mb-6 text-center">Predicción de Rendimiento de Arándanos</h1>
+        <h1 class="text-2xl font-bold mb-6 text-center">Predicción de Rendimiento</h1>
         <form id="formulario" onsubmit="predecirRendimiento(event)" class="bg-white p-6 rounded shadow-md max-w-lg mx-auto">
             <div class="mb-4">
-                <label for="fruitset" class="block text-gray-700">Fruitset:</label>
+                <label for="fruitset" class="block text-gray-700">Fruit Set:</label>
                 <input type="text" id="fruitset" name="fruitset" class="mt-1 p-2 w-full border rounded" required>
             </div>
             <div class="mb-4">
@@ -49,15 +49,15 @@
                 <input type="text" id="seeds" name="seeds" class="mt-1 p-2 w-full border rounded" required>
             </div>
             <div class="mb-4">
-                <label for="fruitmass" class="block text-gray-700">Fruitmass:</label>
+                <label for="fruitmass" class="block text-gray-700">Fruit Mass:</label>
                 <input type="text" id="fruitmass" name="fruitmass" class="mt-1 p-2 w-full border rounded" required>
             </div>
             <div class="mb-4">
-                <label for="row_num" class="block text-gray-700">Row#:</label>
-                <input type="text" id="row_num" name="row_num" class="mt-1 p-2 w-full border rounded" required>
+                <label for="row_number" class="block text-gray-700">Row Number:</label>
+                <input type="text" id="row_number" name="row_number" class="mt-1 p-2 w-full border rounded" required>
             </div>
             <div class="mb-4">
-                <label for="clonesize" class="block text-gray-700">Clonesize:</label>
+                <label for="clonesize" class="block text-gray-700">Clone Size:</label>
                 <input type="text" id="clonesize" name="clonesize" class="mt-1 p-2 w-full border rounded" required>
             </div>
             <div class="mb-4">

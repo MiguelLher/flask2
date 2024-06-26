@@ -9,13 +9,8 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 # Cargar el modelo entrenado
-model = None
-
-@app.before_first_request
-def load_model():
-    global model
-    model = joblib.load('model.pkl')
-    app.logger.debug('Modelo cargado correctamente.')
+model = joblib.load('model.pkl')
+app.logger.debug('Modelo cargado correctamente.')
 
 @app.route('/')
 def home():
@@ -24,10 +19,6 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        global model
-        if model is None:
-            return jsonify({'error': 'El modelo no se ha cargado correctamente.'}), 500
-
         # Obtener los datos enviados en el request
         app.logger.debug(f'Datos recibidos: {request.form}')
         fruitset = float(request.form['fruitset'])
