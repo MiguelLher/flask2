@@ -1,7 +1,6 @@
 from flask import Flask, request, render_template, jsonify
 import joblib
 import pandas as pd
-import numpy as np
 
 app = Flask(__name__)
 
@@ -33,7 +32,7 @@ def predict():
             'AverageOfUpperTRange': [AverageOfUpperTRange]
         })
         
-        # Realizar la predicción
+        # Realizar la predicción usando el modelo cargado
         prediction = model.predict(data)
         prediction_result = prediction[0]
         
