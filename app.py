@@ -14,7 +14,7 @@ app.logger.debug('Modelo cargado correctamente.')
 
 @app.route('/')
 def home():
-    return render_template('Formulario.html')
+    return render_template('formulario.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -24,12 +24,12 @@ def predict():
         fruitset = float(request.form['fruitset'])
         seeds = float(request.form['seeds'])
         fruitmass = float(request.form['fruitmass'])
-        row_num = float(request.form['row_num'])
+        row_number = float(request.form['row_number'])
         clonesize = float(request.form['clonesize'])
         avg_upper_trange = float(request.form['avg_upper_trange'])
 
         # Crear un DataFrame con los datos
-        data_df = pd.DataFrame([[fruitset, seeds, fruitmass, row_num, clonesize, avg_upper_trange]], 
+        data_df = pd.DataFrame([[fruitset, seeds, fruitmass, row_number, clonesize, avg_upper_trange]], 
                                columns=['fruitset', 'seeds', 'fruitmass', 'Row#', 'clonesize', 'AverageOfUpperTRange'])
         app.logger.debug(f'DataFrame creado: {data_df}')
 
@@ -38,7 +38,7 @@ def predict():
         app.logger.debug(f'Predicción: {prediction[0]}')
 
         # Devolver las predicciones como respuesta JSON
-        return jsonify({'yield_predicho': prediction[0]})
+        return jsonify({'yield': prediction[0]})
     except Exception as e:
         app.logger.error(f'Error en la predicción: {str(e)}')
         return jsonify({'error': str(e)}), 400
