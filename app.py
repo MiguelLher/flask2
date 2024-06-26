@@ -14,23 +14,23 @@ app.logger.debug('Modelo cargado correctamente.')
 
 @app.route('/')
 def home():
-    return render_template('formulario.html')
+    return render_template('Formulario.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
         # Obtener los datos enviados en el request
         app.logger.debug(f'Datos recibidos: {request.form}')
-        na_sales = float(request.form['na_sales'])
-        eu_sales = float(request.form['eu_sales'])
-        jp_sales = float(request.form['jp_sales'])
-        other_sales = float(request.form['other_sales'])
-        genre = float(request.form['genre'])
-        platform = float(request.form['platform'])
+        fruitset = float(request.form['fruitset'])
+        seeds = float(request.form['seeds'])
+        fruitmass = float(request.form['fruitmass'])
+        row_num = float(request.form['row_num'])
+        clonesize = float(request.form['clonesize'])
+        avg_upper_trange = float(request.form['avg_upper_trange'])
 
         # Crear un DataFrame con los datos
-        data_df = pd.DataFrame([[na_sales, eu_sales, jp_sales, other_sales, genre, platform]], 
-                               columns=['NA_Sales', 'EU_Sales', 'JP_Sales', 'Other_Sales', 'Genre', 'Platform'])
+        data_df = pd.DataFrame([[fruitset, seeds, fruitmass, row_num, clonesize, avg_upper_trange]], 
+                               columns=['fruitset', 'seeds', 'fruitmass', 'Row#', 'clonesize', 'AverageOfUpperTRange'])
         app.logger.debug(f'DataFrame creado: {data_df}')
 
         # Realizar predicciones
@@ -38,7 +38,7 @@ def predict():
         app.logger.debug(f'Predicción: {prediction[0]}')
 
         # Devolver las predicciones como respuesta JSON
-        return jsonify({'global_sales': prediction[0]})
+        return jsonify({'yield_predicho': prediction[0]})
     except Exception as e:
         app.logger.error(f'Error en la predicción: {str(e)}')
         return jsonify({'error': str(e)}), 400
