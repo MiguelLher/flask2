@@ -24,7 +24,7 @@ def predict():
         fruitset = float(request.form['fruitset'])
         seeds = float(request.form['seeds'])
         fruitmass = float(request.form['fruitmass'])
-        row_num = float(request.form['row_num'])
+        row_num = float(request.form['row_number'])  # Cambio aquí: 'row_number' en lugar de 'row_num'
         clonesize = float(request.form['clonesize'])
         avg_upper_trange = float(request.form['avg_upper_trange'])
 
@@ -33,7 +33,7 @@ def predict():
                                columns=['fruitset', 'seeds', 'fruitmass', 'Row#', 'clonesize', 'AverageOfUpperTRange'])
         app.logger.debug(f'DataFrame creado: {data_df}')
 
-        # Realizar predicciones
+        # Realizar predicciones usando el modelo cargado
         prediction = model.predict(data_df)
         app.logger.debug(f'Predicción: {prediction[0]}')
 
