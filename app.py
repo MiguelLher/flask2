@@ -24,12 +24,12 @@ def predict():
         fruitset = float(request.form['fruitset'])
         seeds = float(request.form['seeds'])
         fruitmass = float(request.form['fruitmass'])
-        row_number = float(request.form['row_number'])
+        row_num = float(request.form['row_num'])
         clonesize = float(request.form['clonesize'])
         avg_upper_trange = float(request.form['avg_upper_trange'])
 
         # Crear un DataFrame con los datos
-        data_df = pd.DataFrame([[fruitset, seeds, fruitmass, row_number, clonesize, avg_upper_trange]], 
+        data_df = pd.DataFrame([[fruitset, seeds, fruitmass, row_num, clonesize, avg_upper_trange]], 
                                columns=['fruitset', 'seeds', 'fruitmass', 'Row#', 'clonesize', 'AverageOfUpperTRange'])
         app.logger.debug(f'DataFrame creado: {data_df}')
 
